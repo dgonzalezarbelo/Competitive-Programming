@@ -36,11 +36,13 @@ bool resuelveCaso() {
 			}
 		}
 	}
-	printf("%d\n", dist[cuadrado]);
+	cout << dist[cuadrado] << '\n';
 	return true;
 }
 
 int main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(nullptr);
 	while (resuelveCaso());
 	return 0;
 }
