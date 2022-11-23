@@ -1,2 +1,2 @@
 # AceptaElReto
-Soluciones a problemas de https://www.aceptaelreto.com/
+C++ solutions to problems from https://www.aceptaelreto.com/
