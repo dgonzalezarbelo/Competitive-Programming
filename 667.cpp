@@ -27,15 +27,34 @@ typedef vector<vll> vvll;
 typedef vector<bool> vb;
 /*-------------------------------------*/
 
+vi cantidades;
 
+bool resuelveCaso() {
+	vi numero;
+	int n;
+	cin >> n;
+	if (!n) return false;
+	for (int i = 0; i < 4; i++) {
+		numero.push_back(n % 10);
+		n /= 10;
+	}
+	vi necesarias(10, 0);
+	cantidades.assign(10, 0);
+	for (int i = 0; i < 10; i++) cin >> cantidades[i];
+	for (int i = 0; i < 4; i++) {
+		necesarias[numero[i]] += 3;
+	}
+	int s = INT_MAX;
+	for (int i = 0; i < 10; i++) {
+		if(necesarias[i]) s = min(s, cantidades[i] / necesarias[i]);
+	}
+	cout << s << '\n';
+	return true;
+}
 
 int main() {
-    int t;
-    cin >> t;
-    while (t--) {
-        int n;
-        cin >> n;
-        cout << n / 100 << '\n';
-    }
-    return 0;
+	ios_base::sync_with_stdio(false);
+	cin.tie(nullptr);
+	while (resuelveCaso());
+	return 0;
 }

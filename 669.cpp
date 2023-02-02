@@ -27,15 +27,37 @@ typedef vector<vll> vvll;
 typedef vector<bool> vb;
 /*-------------------------------------*/
 
-
+bool resuelveCaso() {
+	int n;
+	cin >> n;
+	if (!n) return false;
+	vi v(101);
+	int pares = 0, cuatros = 0;
+	for (int i = 0; i < n; i++) {
+		int a; cin >> a;
+		v[a]++;
+		if (v[a] % 4 == 0) {
+			cuatros++;
+			pares--;
+		}
+		else if (v[a] % 2 == 0) pares++;
+	}
+	int sol = 0;
+	while (cuatros > 0 && pares > 0) {
+		sol++;
+		cuatros--;
+		pares--;
+	}
+	for (int i = 1; i <= cuatros; i++) {
+		if (i % 3 != 1) sol++;
+	}
+	cout << sol << '\n';
+	return true;
+}
 
 int main() {
-    int t;
-    cin >> t;
-    while (t--) {
-        int n;
-        cin >> n;
-        cout << n / 100 << '\n';
-    }
-    return 0;
+	ios_base::sync_with_stdio(false);
+	cin.tie(nullptr);
+	while (resuelveCaso());
+	return 0;
 }

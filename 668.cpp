@@ -27,15 +27,23 @@ typedef vector<vll> vvll;
 typedef vector<bool> vb;
 /*-------------------------------------*/
 
-
+bool resuelveCaso() {
+	int a, b, n;
+	cin >> a >> b >> n;
+	if (!a && !b && !n) return false;
+	n %= 6;
+	if (n == 0) cout << a << '\n';
+	else if (n == 1) cout << b << '\n';
+	else if (n == 2) cout << b - a << '\n';
+	else if (n == 3) cout << -a << '\n';
+	else if (n == 4) cout << -b << '\n';
+	else cout << -b + a << '\n';
+	return true;
+}
 
 int main() {
-    int t;
-    cin >> t;
-    while (t--) {
-        int n;
-        cin >> n;
-        cout << n / 100 << '\n';
-    }
-    return 0;
+	ios_base::sync_with_stdio(false);
+	cin.tie(nullptr);
+	while (resuelveCaso());
+	return 0;
 }

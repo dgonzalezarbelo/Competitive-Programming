@@ -27,15 +27,26 @@ typedef vector<vll> vvll;
 typedef vector<bool> vb;
 /*-------------------------------------*/
 
-
+bool resuelveCaso() {
+	ll total = 0, maximo = 0;
+	ll comimientoDeCulo;
+	int n;
+	cin >> n;
+	if (!cin) return false;
+	while (n--) {
+		ll a;
+		cin >> a;
+		total += a;
+		maximo = max(maximo, a);
+	}
+	comimientoDeCulo = max((ll)0, 2 * maximo - total);
+	cout << total + comimientoDeCulo << '\n';
+	return true;
+}
 
 int main() {
-    int t;
-    cin >> t;
-    while (t--) {
-        int n;
-        cin >> n;
-        cout << n / 100 << '\n';
-    }
-    return 0;
+	ios_base::sync_with_stdio(false);
+	cin.tie(nullptr);
+	while (resuelveCaso());
+	return 0;
 }
