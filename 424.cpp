@@ -23,19 +23,62 @@ using db = double;
 using vdb = vector<db>;
 using ldb = long double; //100 ceros pero poca precision decimal
 
-int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
-    int n; cin >> n;
-    while(n){
-        ll a, m = LLONG_MIN, s = 0;
-        while(n--){
-            cin >> a;
-            s += a;
-            m = max(m, s);
-        }
-        cout << s << ' ' << m << '\n';
-        cin >> n;
+class UnionFind {
+private:
+    vector<int> p, rank;
+    int numSets;
+public:
+    UnionFind(int N) {
+    rank.assign(N, 0);
+    p.assign(N, 0);
+    for (int i = 0; i < N; ++i) p[i] = i;
+        numSets = N;
     }
+    int findSet(int i) {
+        return (p[i] == i) ? i : (p[i] = findSet(p[i]));
+    }
+    bool isSameSet(int i, int j) {
+        return findSet(i) == findSet(j);
+    }
+    void unionSet(int i, int j) {
+        if (!isSameSet(i, j)) {
+            int x = findSet(i), y = findSet(j);
+        if (rank[x] > rank[y]) p[y] = x;
+        else {
+            p[x] = y;
+            if (rank[x] == rank[y]) ++rank[y];
+        }
+        --numSets;
+        }   
+    }   
+    int numDisjointSets() {
+        return numSets;
+    }
+    int sizeOfSet(int i) {
+        int res = 0;
+        for (int j = 0; j < p.size(); ++j) {
+            if (isSameSet(i, j)) ++res;
+        }
+        return res;
+    }
+};
+
+bool resuelveCaso(){
+    int n, m; cin >> n >> m;
+    if(!cin) return false;
+    string s;
+    UnionFind ufds(n * m);
+    int maximo = 0;
+    for(int i = 0; i < n; i++){
+        getline(cin, s);
+        for(int j = 0; j < n; j++){
+            
+        }
+    }
+    return true;
+}
+
+int main() {
+    while(resuelveCaso());
     return 0;
 }
