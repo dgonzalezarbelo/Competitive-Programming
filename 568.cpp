@@ -24,27 +24,61 @@ using db = double;
 using vdb = vector<db>;
 using ldb = long double; //100 ceros pero poca precision decimal
 
-vi dias;
+vi meses;
 
-int dp(int i, vi const& v, queue<ii> & q) {
-    if(i == v.size() - 1) return 1;
-}
-
-bool solve() {
-    int n; cin >> n;
-    if(!cin) return false;
-    vii v(n);
-    rep(i,0,n) {
-        int a, b, c, d; scanf("%d-%d %d-%d", &a, &b, &c, &d);
-        v[i] = mp(a + b * 40, c + 40 * d);
+struct comp {
+    bool operator()(ii const&  p1, ii const& p2) {
+        return p1.second < p2.second || (p1.second == p2.second && p1.first > p2.first);
     }
-    queue<ii> q;
+};
+
+bool resuelveCaso() {
+    int n;
+    if(scanf("%d", &n) == EOF) return false;
+    vi v(410);
+    vii intervalos(n);
+    for(int i = 0; i < n; i++) {
+        int a, b, c, d;
+        scanf("%d-%d %d-%d", &a, &b, &c, &d);
+        intervalos[i] = {meses[--b] + a, meses[--d] + c};
+    }
+    sort(all(intervalos), comp());
+    int sol = 0;
+    for(ii & p : intervalos) {
+        bool ok = true;
+        for(int i = p.first; i <= p.second; i++) {
+            if(v[i] >= 4) {
+                ok = false;
+                break;
+            }
+        }
+        if(!ok) continue;
+        sol++;
+        for(int i = p.first; i <= p.second; i++) {
+            v[i]++;
+        }
+    }
+    printf("%d\n", sol);
     return true;
 }
 
 int main() {
-    // ios_base::sync_with_stdio(false);
-    // cin.tie(nullptr);
-    while(solve());
+    meses.assign(12, 0);
+    meses[0] = 0;
+    meses[1] = 31;
+    meses[2] = 29;
+    meses[3] = 31;
+    meses[4] = 30;
+    meses[5] = 31;
+    meses[6] = 30;
+    meses[7] = 31;
+    meses[8] = 31;
+    meses[9] = 30;
+    meses[10] = 31;
+    meses[11] = 30;
+    for(int i = 1; i < 12; i++) {
+        meses[i] += meses[i - 1];
+    }
+    while(resuelveCaso());
     return 0;
 }
