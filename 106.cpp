@@ -28,31 +28,38 @@ using ldb = long double; //100 ceros pero poca precision decimal
 unordered_map<ll, string> m;
 
 bool resuelveCaso() {
-    ll n; cin >> n;
-    if(!n) return false;
-    ll init = n / 10, last = n % 10;
-    ll cod = 0;
-    bool ean13 = n >= 1e9;
-    bool todos_digitos = n >= 1e13;
+    string s; cin >> s;
+    if(s == "0") return false;
+    bool ean13 = sz(s) > 8;
+    bool trece_digitos = sz(s) >= 13;
+    int j = sz(s) - 2;
     int i = 1;
-    while(init) {
+    ll cod = 0;
+    while(j >= 0) {
         if(i % 2 == 0)
-            cod += init % 10;
+            cod += (s[j] - '0') % 10;
         else
-            cod += (init % 10) * 3;
-        init /= 10;
+            cod += ((s[j] - '0') % 10) * 3;
         i++;
+        j--;
     }
-    int rem = (10 - cod % 10) % 10;
-    if(rem != last) cout << "NO\n";
+    ll rem = (10 - cod % 10) % 10;
+    if(rem != s[sz(s) - 1] - '0') cout << "NO\n";
     else {
         cout << "SI";
         if(ean13) {
             cout << ' ';
-            if(todos_digitos) cout << "EEUU";
+            if(!trece_digitos) cout << "EEUU";
             else {
-                while(n && !m.count(n)) n /= 10;
-                if(n) cout << m[n];
+                int acum = s[0] - '0';
+                int i = 1;
+                while(!m.count(acum)) {
+                    acum *= 10;
+                    acum += s[i] - '0';
+                    i++;
+                    if(i == 4) break;
+                }
+                if(m.count(acum)) cout << m[acum];
                 else cout << "Desconocido";
             }
         }
