@@ -25,37 +25,23 @@ using db = double;
 using vdb = vector<db>;
 using ldb = long double; //100 ceros pero poca precision decimal
 
-ll calcula(string & s, int pos) {
-    if(pos == sz(s)) {
-        bool crece = true, decrece = true;
-        char prev, cur = s[0];
-        for(int i = 1; i < sz(s); i++) {
-            prev = cur;
-            cur = s[i];
-            if(cur > prev) decrece = false;
-            if(cur < prev) crece = false;
-        }
-        if(!crece && !decrece) return 1;
-        else return 0;
-    }
-    ll sol = 0;
-    for(char a = 'a'; a <= 'z'; a++) {
-        s[pos] = a;
-        sol += calcula(s, pos + 1);
-    }
-    return sol;
+vi v;
+
+bool solve(int i, int l, int r) {
+    if(i == sz(v)) return l == r;
+    if(solve(i + 1, l + v[i], r)) return true;
+    if(solve(i + 1, l, r + v[i])) return true;
+    return false;
 }
 
 int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
     int n;
-    while(true) {
-        cin >> n;
-        int c = 0;
-        while(n >= 0) {
-            n -= 2;
-            c += n - 2;
-        }
-        cout << c << '\n';
+    while(cin >> n && n) {
+        v.assign(n, 0);
+        rep(i,0,n) cin >> v[i];
+        solve(0, 0, 0) ? cout << "SI\n" : cout << "NO\n";
     }
     return 0;
 }
