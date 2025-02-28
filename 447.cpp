@@ -12,6 +12,7 @@ using namespace std;
 const double EPS = 1e-9;
 const double INF = 1e9; //1e18 tambien suele ir bien
 using ll = long long int;
+using ull = unsigned long long;
 using ii = pair<int, int>;
 using vi = vector<int>;
 using vll = vector<ll>;
@@ -24,38 +25,66 @@ using db = double;
 using vdb = vector<db>;
 using ldb = long double; //100 ceros pero poca precision decimal
 
-bool dfs(vi & niveles, set<vi> & s, int l, vi & capacidades) {
-    if(s.count(niveles)) return false;
-    s.insert(niveles);
-    for(int x : niveles) if(x == l) return true;
-    for(int i = 0; i < niveles.size(); i++) {
-        int aux = niveles[i];
-        niveles[i] = 0; //Vaciar
-        if(dfs(niveles, s, l, capacidades)) return true;
-        niveles[i] = capacidades[i]; //Llenar
-        if(dfs(niveles, s, l, capacidades)) return true;
-        niveles[i] = aux; //Restaurar
-        for(int j = 0; j < niveles.size(); j++) {
-            if(i != j) {
-                
-            }
-        }
-    }
-}
-
-bool solve() {
-    int l, r; cin >> l;
-    if(!l) return false;
-    cin >> r;
-    vi capacidades(r);
-    for(int i = 0; i < r; i++) cin >> capacidades[r];
-    
-    return true;
-}
-
 int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    while(solve());
+    int l, r;
+    while(cin >> l && l) {
+        cin >> r;
+        vi v(r);
+        rep(i,0,r) cin >> v[i];
+        bool sol = false;
+        rep(i,0,r) {
+            if(v[i] == l) {
+                cout << "SI\n";
+                sol = true;
+                break;
+            }
+        }
+        if(sol) continue;
+        map<vi, bool> vis;
+        vi estado(r, 0);
+        queue<vi> q;
+        q.push(estado);
+        vis[estado] = true;
+        while(!q.empty()) {
+            estado = q.front(); q.pop();
+            vi w;
+            rep(i,0,r) {
+                if(estado[i] == l) {
+                    cout << "SI\n";
+                    sol = true;
+                    break;
+                }
+            }
+            if(sol) break;
+            rep(i,0,r) {
+                w = estado;
+                w[i] = 0;
+                if(!vis[w]) {
+                    vis[w] = true;
+                    q.push(w);
+                }
+                w = estado;
+                w[i] = v[i];
+                if(!vis[w]) {
+                    vis[w] = true;
+                    q.push(w);
+                }
+                rep(j,0,r) {
+                    w = estado;
+                    if(i == j) continue;
+                    int paso = min(w[i], v[j] - w[j]);
+                    w[i] -= paso;
+                    w[j] += paso;
+                    if(!vis[w]) {
+                        vis[w] = true;
+                        q.push(w);
+                    }
+                }
+            }
+        }
+        if(!sol) cout << "NO\n";
+    }
     return 0;
 }

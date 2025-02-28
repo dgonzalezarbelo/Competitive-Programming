@@ -9,7 +9,7 @@ using namespace std;
 #define se second
 #define mp make_pair
 
-const double EPS = 1e-9;
+const double EPS = 1e-6;
 const double INF = 1e9; //1e18 tambien suele ir bien
 using ll = long long int;
 using ull = unsigned long long;
@@ -25,37 +25,115 @@ using db = double;
 using vdb = vector<db>;
 using ldb = long double; //100 ceros pero poca precision decimal
 
-ll calcula(string & s, int pos) {
-    if(pos == sz(s)) {
-        bool crece = true, decrece = true;
-        char prev, cur = s[0];
-        for(int i = 1; i < sz(s); i++) {
-            prev = cur;
-            cur = s[i];
-            if(cur > prev) decrece = false;
-            if(cur < prev) crece = false;
+template <class T> int sgn(T x) { return (x > 0) - (x < 0); }
+template<class T>
+struct Point {
+	typedef Point P;
+	T x, y;
+	explicit Point(T x=0, T y=0) : x(x), y(y) {}
+	bool operator<(P p) const { return tie(x,y) < tie(p.x,p.y); }
+	bool operator==(P p) const { return tie(x,y)==tie(p.x,p.y); }
+	P operator+(P p) const { return P(x+p.x, y+p.y); }
+	P operator-(P p) const { return P(x-p.x, y-p.y); }
+	P operator*(T d) const { return P(x*d, y*d); }
+	P operator/(T d) const { return P(x/d, y/d); }
+	T dot(P p) const { return x*p.x + y*p.y; }
+	T cross(P p) const { return x*p.y - y*p.x; }
+	T cross(P a, P b) const { return (a-*this).cross(b-*this); }
+	T dist2() const { return x*x + y*y; }
+	double dist() const { return sqrt((double)dist2()); }
+	// angle to x-axis in interval [-pi, pi]
+	double angle() const { return atan2(y, x); }
+	P unit() const { return *this/dist(); } // makes dist()=1
+	P perp() const { return P(-y, x); } // rotates +90 degrees
+	P normal() const { return perp().unit(); }
+	// returns point rotated 'a' radians ccw around the origin
+	P rotate(double a) const {
+		return P(x*cos(a)-y*sin(a),x*sin(a)+y*cos(a)); }
+	friend ostream& operator<<(ostream& os, P p) {
+		return os << "(" << p.x << "," << p.y << ")"; }
+};
+
+template<class P> bool onSegment(P s, P e, P p) {
+	return p.cross(s, e) == 0 && (s - p).dot(e - p) <= 0;
+}
+
+vector<Point<double>> segInter(Point<double> a, Point<double> b, Point<double> c, Point<double> d) {
+	auto oa = c.cross(d, a), ob = c.cross(d, b),
+	     oc = a.cross(b, c), od = a.cross(b, d);
+	// Checks if intersection is single non-endpoint point.
+	if (sgn(oa) * sgn(ob) < 0 && sgn(oc) * sgn(od) < 0)
+		return {(a * ob - b * oa) / (ob - oa)};
+	set<Point<double>> s;
+	if (onSegment(c, d, a)) s.insert(a);
+	if (onSegment(c, d, b)) s.insert(b);
+	if (onSegment(a, b, c)) s.insert(c);
+	if (onSegment(a, b, d)) s.insert(d);
+	return {all(s)};
+}
+
+bool resuelveCaso() {
+    double a, b, ancho, alto;
+    cin >> a >> b >> ancho >> alto;
+    if(!cin) return false;
+    if(a < b) swap(a, b);
+    if(b > ancho || b > alto) {
+        cout << "NO\n";
+        return true;
+    }
+    if(a <= ancho && a <= alto) {
+        cout << "SI\n";
+        return true;
+    }
+    bool ok = true;
+    double incremento = 0.25;
+    for(double alpha = incremento; alpha < 90.0; alpha += incremento) {
+        if(!ok) continue;
+        Point<double> pa(b * sin(alpha), a * sin(alpha) + b * cos(alpha));
+        Point<double> pb(b * sin(alpha) + a * cos(alpha), b * cos(alpha));
+        vector<Point<double>> in_a = segInter(pa, pb, Point<double>(ancho, alto), Point<double>(ancho + a, alto));
+        vector<Point<double>> in_b = segInter(pa, pb, Point<double>(ancho, alto), Point<double>(ancho, alto + a));
+        Point<double> esquina(ancho, alto);
+        if(sz(in_a) == 0 && sz(in_b) == 0) continue;
+        if(sz(in_a) > 0 && sz(in_b) == 0) {
+            Point<double> xa = in_a[0];
+            if((xa - esquina).dist() > EPS) {
+                ok = false;
+                continue;
+            }
         }
-        if(!crece && !decrece) return 1;
-        else return 0;
+        if(sz(in_b) > 0 && sz(in_a) == 0) {
+            Point<double> xb = in_b[0];
+            if((xb - esquina).dist() > EPS) {
+                ok = false;
+                continue;
+            }
+        }
+        if(sz(in_a) > 0 && sz(in_b) > 0) {
+            Point<double> xa = in_a[0];
+            Point<double> xb = in_b[0];
+            if((xa - esquina).dist() > EPS) {
+                ok = false;
+                continue;
+            }
+            if((xb - esquina).dist() > EPS) {
+                ok = false;
+                continue;
+            }
+            if((xa - xb).dist() > EPS) {
+                ok = false;
+                break;
+            }
+        }
     }
-    ll sol = 0;
-    for(char a = 'a'; a <= 'z'; a++) {
-        s[pos] = a;
-        sol += calcula(s, pos + 1);
-    }
-    return sol;
+    if(ok) cout << "SI\n";
+    else cout << "NO\n";
+    return true;
 }
 
 int main() {
-    int n;
-    while(true) {
-        cin >> n;
-        int c = 0;
-        while(n >= 0) {
-            n -= 2;
-            c += n - 2;
-        }
-        cout << c << '\n';
-    }
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+    while(resuelveCaso());
     return 0;
 }
